@@ -18,6 +18,7 @@ let title = document.getElementById("level-title")
 let level = 1
 let game_colors = []
 let user_list_of_colors = []
+let end_game = false
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //               Defining Section Done
@@ -31,8 +32,10 @@ function Start_Game (list_of_colors, current_level) {
 
   title.innerHTML = `level ${level}`
   game_colors = Generate_Color_Info_and_Effects(list_of_colors)
-  // ^^^ list + new color to compare with user's list. not affected by count, since we add to previous colors. Generate occurs once each cycle
-  Check_User_Results(user_list_of_colors, current_level)
+  // ^^^ list + new color to compare with user's list. 
+  user_list_of_colors = []
+  Get_Users_Results()
+  setTimeout(()=>Check_User_Results(user_list_of_colors, current_level), 800 +  level*500)
 }
 
 
@@ -56,29 +59,28 @@ function Give_Color_Sound_Effect(button) {
   setTimeout(() => {button.classList.toggle("pressed")}, 40)
 }
 
-function  Check_User_Results (){
+function  Get_Users_Results (){
   document.addEventListener("click", find_element)// find element
 }
-
 function find_element (e){ 
   let element = e.target.id // get id
   let pressed_btn = document.getElementById(element) // get element
   user_list_of_colors.push(element) // push to list
   Give_Color_Sound_Effect(pressed_btn) // sound/display effects
+}
 
+
+function Check_User_Results(){
   for (i=0; i<level; i++) { // check if lists are equal
+    console.log(level, user_list_of_colors, game_colors)
     if(user_list_of_colors[i] != game_colors[i]){
-      console.log(level, user_list_of_colors, game_colors)
-      console.log("You Lose")
+      end_game = true
       End_Game()
-      break 
-    }else{
-      console.log("You Win")}
-      level++   
-      console.log(level, user_list_of_colors, game_colors)
-
-      Start_Game(game_colors, level)
+      return
     }
+  }
+    level++
+    Start_Game(game_colors, level)
 }
 
 function End_Game() {
@@ -90,14 +92,3 @@ function End_Game() {
   user_list_of_colors = []
   level = 1
 }
-
-// ~~~~~~~~~~~~
-// WHAT'S Left:
-// ~~~~~~~~~~~~
-
-// When first answer is correct: how do i require level numbers of clicks
-
-// ~~~~~~~~~
-//  ISSUES: 
-// ~~~~~~~~~
-// ONCLICK event listener is being attached each time a key is pressed ruining the data. why will it be pressed in the first place?
