@@ -1,11 +1,9 @@
-// define button constants 
 const green_btn = document.getElementById("green")
 const red_btn = document.getElementById("red")
 const yellow_btn = document.getElementById("yellow")
 const blue_btn = document.getElementById("blue")
 const buttons = [green_btn, red_btn, yellow_btn, blue_btn]
 
-//define audio constants
 const green_sound = document.getElementById("green_sound")
 const red_sound = document.getElementById("red_sound")
 const yellow_sound = document.getElementById("yellow_sound")
@@ -13,17 +11,15 @@ const blue_sound = document.getElementById("blue_sound")
 
 const body = document.getElementsByTagName("body")[0]
 
-//define changing and reusable function attributes 
 let title = document.getElementById("level-title")
 let level = 1
 let game_colors = []
 let user_list_of_colors = []
-let end_game = false
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//               Defining Section Done
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+// Main Function 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 body.addEventListener("keypress", Start_Game)
 
 function Start_Game (list_of_colors, current_level) {
@@ -31,20 +27,17 @@ function Start_Game (list_of_colors, current_level) {
   current_level = level 
 
   title.innerHTML = `level ${level}`
-  game_colors = Generate_Color_Info_and_Effects(list_of_colors)
-  // ^^^ list + new color to compare with user's list. 
+  game_colors = Generate_Color_Info_and_Effects(list_of_colors) // returns a new color and stores it in game_colors
   user_list_of_colors = []
-  Get_Users_Results()
-  setTimeout(()=>Check_User_Results(user_list_of_colors, current_level), 800 +  level*500)
+  Get_Users_Results() // pushes event trigger element to user_list_of_colors
+  setTimeout(()=>Check_User_Results(user_list_of_colors, current_level),1000 +  level*300) // compares list elements
 }
-
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//               Helper Functions Section
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// takes list_of_colors and randomly displays the color's effects
-// adds color id to the list and Returns adjusted list
+
+//Helper Functions Section
+
+// Returns adjusted list
 function Generate_Color_Info_and_Effects(list_of_colors) {
   let button = buttons[Math.floor(Math.random()*buttons.length)]
   Give_Color_Sound_Effect(button)
@@ -59,22 +52,23 @@ function Give_Color_Sound_Effect(button) {
   setTimeout(() => {button.classList.toggle("pressed")}, 40)
 }
 
+
 function  Get_Users_Results (){
-  document.addEventListener("click", find_element)// find element
+  document.addEventListener("click", find_element)
 }
+// adjusts user_list_of_colors
 function find_element (e){ 
-  let element = e.target.id // get id
-  let pressed_btn = document.getElementById(element) // get element
-  user_list_of_colors.push(element) // push to list
-  Give_Color_Sound_Effect(pressed_btn) // sound/display effects
+  let element = e.target.id
+  let pressed_btn = document.getElementById(element) 
+  user_list_of_colors.push(element) 
+  Give_Color_Sound_Effect(pressed_btn) 
 }
 
-
+// Compare lists after click: EndGame or Continue game 
 function Check_User_Results(){
-  for (i=0; i<level; i++) { // check if lists are equal
+  for (i=0; i<level; i++) { 
     console.log(level, user_list_of_colors, game_colors)
     if(user_list_of_colors[i] != game_colors[i]){
-      end_game = true
       End_Game()
       return
     }
@@ -83,12 +77,12 @@ function Check_User_Results(){
     Start_Game(game_colors, level)
 }
 
+// Display game-over effects and reset values
 function End_Game() {
   body.classList.toggle("game-over")
   document.getElementById("wrong").play()
   setTimeout(() => {body.classList.toggle("game-over")}, 150) 
   document.removeEventListener("click", find_element)
   game_colors = []
-  user_list_of_colors = []
   level = 1
 }
