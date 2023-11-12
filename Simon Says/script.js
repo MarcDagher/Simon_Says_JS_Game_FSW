@@ -85,4 +85,5 @@ function End_Game() {
   document.removeEventListener("click", find_element)
   game_colors = []
   level = 1
+  title.innerHTML = `Press Any Key to Start`
 }
